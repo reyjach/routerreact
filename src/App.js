@@ -5,9 +5,11 @@ class App extends Component{
 
   render() {
     return (
-      <div className="contenedor">
+      <React.Fragment>
         <Router></Router>
-      </div>
+      </React.Fragment>
+        
+      
     );
   }
   
