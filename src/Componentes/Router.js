@@ -5,6 +5,7 @@ import Nosotros from './Nosotros';
 import Navegacion from './Navegacion';
 import Error from './Error';
 import Header from './Header';
+import Contacto from './Contacto'
 import SingleProducto from './SingleProducto';
 import infoProductos from '../datos/datos.json';
 
@@ -12,7 +13,8 @@ import infoProductos from '../datos/datos.json';
 class Router extends Component {
 
     state = {
-        productos:[]
+        productos:[],
+        terminoBusqueda:''
     }
 
     componentWillMount(){
@@ -20,8 +22,35 @@ class Router extends Component {
             productos:infoProductos
         })
     }
+
+    busquedaProducto =(busqueda) => {
+        if(busqueda.length > 3) {
+            this.setState({
+                terminoBusqueda:busqueda
+            })
+        }else {
+            this.setState({
+                terminoBusqueda: ''
+            })
+        }
+    } 
     
-    render() { 
+    render() {
+        
+        let productos = [...this.state.productos];
+        let busqueda = this.state.terminoBusqueda;
+        let resultado;
+        
+
+        if(busqueda !== '') {
+            console.log(busqueda.toLowerCase())
+            resultado=productos.filter(producto => (
+                producto.nombre.toLowerCase().indexOf( busqueda.toLowerCase() ) !==-1
+            ))
+        } else {
+            resultado=productos;
+        }
+
         return (
             <div className="contenedor">
                 <BrowserRouter>
@@ -29,11 +58,11 @@ class Router extends Component {
                     <Navegacion></Navegacion>
                     <Switch>
                         <Route exact path='/' render={() => (
-                            <Productos productos={this.state.productos}></Productos>
+                            <Productos productos={resultado} busquedaProducto={this.busquedaProducto}></Productos>
                         )} />
                         <Route exact path='/nosotros' component={Nosotros} />
                         <Route exact path='/productos' render={ () => (
-                            <Productos productos={this.state.productos}></Productos>
+                            <Productos productos={resultado} busquedaProducto={this.busquedaProducto}></Productos>
                         )} />
                         <Route exact path='/producto/:productoId' render={(props) => {
 
@@ -47,7 +76,7 @@ class Router extends Component {
 
                             }} />
 
-                        <Router exact path={"/contacto"} component={Contacto}></Router>
+                        <Route exact path="/contacto" component={Contacto}></Route>
                         
                         <Route component={Error} />
                     </Switch>
